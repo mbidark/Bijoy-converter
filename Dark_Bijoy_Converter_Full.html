@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dark Bijoy Converter | MBI DARK</title>
+<style>
+:root{--ink:#191919;--muted:#777;--line:#e7e7e7;--green:#16834b;--soft:#f7f8f7;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font:14px/1.5 Arial,"Noto Sans Bengali",sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.shell{max-width:1120px;margin:auto;padding:22px}
+header{height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:14px}
+.logo{font-size:18px;font-weight:700;letter-spacing:-.4px}.logo small{display:block;font-size:11px;color:var(--muted);font-weight:400;letter-spacing:0}
+.tag{font-size:11px;color:var(--green);border:1px solid #d8eadf;border-radius:20px;padding:5px 10px}
+h1{font-size:27px;letter-spacing:-.8px;margin:30px 0 3px}.lead{color:var(--muted);margin:0 0 22px}
+.toolbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.btn{border:1px solid var(--line);background:#fff;color:#333;border-radius:6px;padding:8px 11px}.btn:hover{border-color:#aaa}
+.btn.dark{background:#191919;color:#fff;border-color:#191919}.btn.green{background:var(--green);color:white;border-color:var(--green)}
+.btn.active{background:#191919;color:white;border-color:#191919}
+.switch{display:flex;gap:5px;margin-left:auto}
+.workspace{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.panel{border:1px solid var(--line);border-radius:9px;overflow:hidden;min-width:0}
+.paneltop{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;border-bottom:1px solid var(--line);font-weight:700}
+.meta{font-size:11px;color:var(--muted);font-weight:400}
+textarea{width:100%;height:285px;display:block;border:0;outline:0;resize:vertical;padding:15px;font:16px/1.8 Arial,sans-serif;color:#222}
+#out{font-family:SutonnyMJ,Arial,sans-serif}
+.panelbottom{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 11px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
+.rowbtn{display:flex;gap:6px;flex-wrap:wrap}.mini{padding:5px 8px;font-size:12px}
+.mainrow{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:16px 0}
+.tools{margin-top:23px;border-top:1px solid var(--line);padding-top:18px}
+.tools h2{font-size:16px;margin:0 0 12px}
+.toolgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tool{border:1px solid var(--line);border-radius:8px;padding:12px;min-width:0}
+.tool h3{font-size:13px;margin:0 0 9px}.tool input,.tool select{width:100%;padding:8px;border:1px solid var(--line);border-radius:5px;margin-bottom:7px;min-width:0}
+.help{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:12px 14px;color:#555;font-size:12px;margin-top:16px}
+footer{display:flex;justify-content:space-between;gap:10px;color:#888;font-size:11px;border-top:1px solid var(--line);margin-top:28px;padding-top:14px}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;border-radius:6px;padding:9px 14px;opacity:0;transition:.2s;pointer-events:none}#toast.show{opacity:1}
+#historyList{max-height:120px;overflow:auto;font-size:12px;color:#555}
+small.muted{color:var(--muted)}
+@media(max-width:760px){.shell{padding:15px}.workspace{grid-template-columns:1fr}.toolgrid{grid-template-columns:1fr 1fr}textarea{height:210px}.switch{margin-left:0}h1{font-size:23px}}
+@media(max-width:450px){.toolgrid{grid-template-columns:1fr}.toolbar .switch{width:100%}}
+@media print{header,.toolbar,.mainrow,.tools,.help,footer,.panelbottom{display:none!important}.shell{max-width:none;padding:0}.workspace{display:block}.panel{border:0;margin-bottom:20px}textarea{height:auto;min-height:200px;overflow:visible;resize:none}.paneltop{border-bottom:1px solid #ccc}}
+</style>
+</head>
+<body><div class="shell">
+<header><div class="logo">Dark Bijoy Converter<small>✿ "Mʙɪ Dᴀʀᴋ"</small></div><span class="tag">BANGLA TEXT TOOLKIT</span></header>
+<h1>Bangla Text Converter</h1><p class="lead">Unicode and Bijoy conversion tools for Microsoft Word.</p>
+<div class="toolbar">
+<button class="btn active" id="modeUB">Unicode → Bijoy</button><button class="btn" id="modeBU">Bijoy → Unicode</button>
+<div class="switch"><button class="btn mini" id="autoBtn">Auto convert: Off</button><button class="btn mini" id="swapBtn">Swap</button></div>
+</div>
+<div class="workspace">
+<section class="panel"><div class="paneltop"><span id="srcTitle">Unicode input</span><span class="meta" id="srcCount">0 chars · 0 words · 0 lines</span></div>
+<textarea id="src" placeholder="এখানে বাংলা লেখা পেস্ট করুন..." spellcheck="false"></textarea>
+<div class="panelbottom"><span>INPUT</span><div class="rowbtn"><button class="btn mini" id="pasteBtn">Paste</button><button class="btn mini" id="cutBtn">Cut</button><button class="btn mini" id="selectBtn">Select all</button><button class="btn mini" id="clearBtn">Clear</button></div></div></section>
+<section class="panel"><div class="paneltop"><span id="dstTitle">Bijoy output · SutonnyMJ</span><span class="meta" id="dstCount">0 chars · 0 words · 0 lines</span></div>
+<textarea id="dst" placeholder="Converted text appears here..." spellcheck="false"></textarea>
+<div class="panelbottom"><span>OUTPUT</span><div class="rowbtn"><button class="btn mini" id="copyBtn">Copy result</button><button class="btn mini" id="downloadBtn">Download TXT</button></div></div></section>
+</div>
+<div class="mainrow"><button class="btn green" id="convertBtn">Convert text</button><button class="btn" id="undoBtn">Undo</button><button class="btn" id="redoBtn">Redo</button><button class="btn" id="printBtn">Print</button><button class="btn" id="clearAllBtn">Clear all</button></div>
+
+<section class="tools"><h2>Extra tools</h2><div class="toolgrid">
+<div class="tool"><h3>Find & Replace</h3><input id="findText" placeholder="Find text"><input id="replaceText" placeholder="Replace with"><button class="btn mini" id="replaceBtn">Replace all in input</button></div>
+<div class="tool"><h3>Text case</h3><select id="caseMode"><option value="upper">UPPERCASE</option><option value="lower">lowercase</option><option value="title">Title Case</option><option value="sentence">Sentence case</option></select><button class="btn mini" id="caseBtn">Apply to input</button></div>
+<div class="tool"><h3>Batch conversion</h3><small class="muted">Convert the full input at once, including multiple paragraphs.</small><br><button class="btn mini" id="batchBtn" style="margin-top:8px">Convert all paragraphs</button></div>
+<div class="tool"><h3>Conversion history</h3><div id="historyList">No recent conversions.</div><button class="btn mini" id="clearHistoryBtn" style="margin-top:8px">Clear history</button></div>
+<div class="tool"><h3>Keyboard shortcuts</h3><small class="muted">Ctrl + Enter: Convert<br>Ctrl + Shift + C: Copy output<br>Ctrl + Z / Ctrl + Y: Undo / Redo</small></div>
+<div class="tool"><h3>Word formatting</h3><small class="muted">Bijoy output is legacy encoded text. In Word, select the output and choose SutonnyMJ. Unicode output should use a Unicode Bengali font.</small></div>
+</div></section>
+<div class="help"><b>Important:</b> SutonnyMJ font must be installed in Windows. Conversion engine loads from a public CDN, so internet is required when opening this standalone file. Once loaded, browser caching may help, but this file is not guaranteed fully offline. Avro phonetic conversion is not included in this version.</div>
+<footer><span>Dark Bijoy Converter</span><span>Made with ✿ "Mʙɪ Dᴀʀᴋ"</span></footer>
+</div><div id="toast"></div>
+<script src="https://cdn.jsdelivr.net/gh/TohaKhan6/Unicode-to-Bijoy@main/js/vendor/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/TohaKhan6/Unicode-to-Bijoy@main/js/fontconverter.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),src=$('src'),dst=$('dst');let direction='ub',auto=false,undoStack=[],redoStack=[],lastSrc='';
+const toast=$('toast');let toastTimer;
+function msg(t){toast.textContent=t;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),1900)}
+function words(s){return s.trim()?s.trim().split(/\s+/).length:0}
+function stats(el,id){let v=el.value;$(id).textContent=v.length+' chars · '+words(v)+' words · '+(v?v.split('\n').length:0)+' lines'}
+function refresh(){stats(src,'srcCount');stats(dst,'dstCount')}
+function engineReady(){return typeof window.ConvertToASCII==='function'&&typeof window.ConvertToUnicode==='function'}
+function snapshot(){undoStack.push({src:src.value,dst:dst.value});if(undoStack.length>80)undoStack.shift();redoStack=[]}
+function convert(show=true){
+ if(!engineReady()){msg('Conversion engine loading: connect internet and reload.');return}
+ snapshot();
+ let result=direction==='ub'?ConvertToASCII(src.value):ConvertToUnicode(src.value);
+ dst.value=result;lastSrc=src.value;refresh();saveHistory(src.value,result);
+ if(show)msg('Conversion complete');
+}
+function setMode(d){direction=d;$('modeUB').classList.toggle('active',d==='ub');$('modeBU').classList.toggle('active',d==='bu');$('srcTitle').textContent=d==='ub'?'Unicode input':'Bijoy input · SutonnyMJ';$('dstTitle').textContent=d==='ub'?'Bijoy output · SutonnyMJ':'Unicode output';src.placeholder=d==='ub'?'এখানে Unicode বাংলা পেস্ট করুন...':'এখানে Bijoy লেখা পেস্ট করুন...';dst.style.fontFamily=d==='ub'?'SutonnyMJ,Arial,sans-serif':'Arial,sans-serif';if(auto&&src.value)convert(false)}
+function saveHistory(a,b){try{let h=JSON.parse(localStorage.getItem('darkBijoyHistory')||'[]');h.unshift({a:a.slice(0,160),b:b.slice(0,160),d:direction,t:new Date().toLocaleString()});localStorage.setItem('darkBijoyHistory',JSON.stringify(h.slice(0,8)));renderHistory()}catch(e){}}
+function renderHistory(){try{let h=JSON.parse(localStorage.getItem('darkBijoyHistory')||'[]');$('historyList').innerHTML=h.length?h.map(x=>'<div style="padding:4px 0;border-bottom:1px solid #eee">'+escapeHTML(x.t)+' · '+escapeHTML(x.d==='ub'?'Unicode → Bijoy':'Bijoy → Unicode')+'</div>').join(''):'No recent conversions.'}catch(e){}}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$('modeUB').onclick=()=>setMode('ub');$('modeBU').onclick=()=>setMode('bu');$('swapBtn').onclick=()=>{setMode(direction==='ub'?'bu':'ub');let t=src.value;src.value=dst.value;dst.value=t;refresh()};
+$('convertBtn').onclick=()=>convert();$('batchBtn').onclick=()=>convert();
+$('autoBtn').onclick=()=>{auto=!auto;$('autoBtn').textContent='Auto convert: '+(auto?'On':'Off');if(auto&&src.value)convert(false)};
+src.addEventListener('input',()=>{refresh();if(auto){clearTimeout(window.__darkAuto);window.__darkAuto=setTimeout(()=>convert(false),250)}});
+dst.addEventListener('input',refresh);
+$('copyBtn').onclick=async()=>{try{await navigator.clipboard.writeText(dst.value);msg('Output copied')}catch(e){dst.select();document.execCommand('copy');msg('Output copied')}}
+$('pasteBtn').onclick=async()=>{try{src.value=await navigator.clipboard.readText();refresh();if(auto)convert(false)}catch(e){msg('Press Ctrl + V to paste')}}
+$('cutBtn').onclick=()=>{src.select();try{document.execCommand('cut')}catch(e){}refresh()};
+$('selectBtn').onclick=()=>{src.focus();src.select()};
+$('clearBtn').onclick=()=>{snapshot();src.value='';refresh()};
+$('clearAllBtn').onclick=()=>{snapshot();src.value='';dst.value='';refresh();msg('All text cleared')};
+$('downloadBtn').onclick=()=>{let blob=new Blob([dst.value],{type:'text/plain;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='dark-bijoy-output.txt';a.click();URL.revokeObjectURL(a.href)};
+$('printBtn').onclick=()=>window.print();
+$('undoBtn').onclick=()=>{if(!undoStack.length)return msg('Nothing to undo');redoStack.push({src:src.value,dst:dst.value});let x=undoStack.pop();src.value=x.src;dst.value=x.dst;refresh()};
+$('redoBtn').onclick=()=>{if(!redoStack.length)return msg('Nothing to redo');undoStack.push({src:src.value,dst:dst.value});let x=redoStack.pop();src.value=x.src;dst.value=x.dst;refresh()};
+$('replaceBtn').onclick=()=>{let f=$('findText').value;if(!f)return msg('Enter text to find');snapshot();src.value=src.value.split(f).join($('replaceText').value);refresh();msg('Replace complete')};
+$('caseBtn').onclick=()=>{snapshot();let m=$('caseMode').value,s=src.value;if(m==='upper')s=s.toUpperCase();if(m==='lower')s=s.toLowerCase();if(m==='title')s=s.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase());if(m==='sentence')s=s.toLowerCase().replace(/(^\s*\w|[.!?]\s+\w)/g,c=>c.toUpperCase());src.value=s;refresh()};
+$('clearHistoryBtn').onclick=()=>{localStorage.removeItem('darkBijoyHistory');renderHistory();msg('History cleared')};
+document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter'){e.preventDefault();convert()}if(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()==='c'){e.preventDefault();$('copyBtn').click()}});
+renderHistory();refresh();
+})();
+</script>
+</body></html>
